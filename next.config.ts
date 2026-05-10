@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: [
+    "@transferwise/components",
+    "@wise/components-theming",
+    "@wise/art",
+  ],
 };
 
 export default nextConfig;

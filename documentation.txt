@@ -1,0 +1,317 @@
+# Fello — Tasarım & Geliştirme Dokümanı
+
+> **Durum:** Tasarım aşaması — kod yok  
+> **Hedef:** Demo sunumu için çalışan mobil UI  
+> **Son güncelleme:** Mayıs 2026
+
+---
+
+## 1. Proje Tanımı
+
+**Fello**, kullanıcının e-postalarından ve banka hareketlerinden otomatik olarak harcama verisi çeken, bu verileri uzun vadeli kişisel hafızaya dönüştüren bir AI finans asistanıdır.
+
+### Temel Fark Yaratıcılar
+
+| Özellik | Açıklama |
+|---|---|
+| **Pasif veri toplama** | Kullanıcı manuel giriş yapmaz; Gmail entegrasyonu fatura/harcama e-postalarını otomatik parse eder |
+| **Uzun vadeli hafıza** | CogniMemo (cognimemo.com) sayesinde "geçen ay Getir'e ne kadar harcadım?" gibi sorgular çalışır |
+| **Kişiselleşen içgörüler** | Zaman içinde örüntü analizi yaparak alışkanlık tabanlı öneriler üretir |
+
+### Ne Değildir
+- Ödeme / transfer uygulaması değil
+- Bütçe planlama aracı değil (henüz)
+- Sadece harcama takip listesi değil — hafıza + yorum katmanı var
+
+---
+
+## 2. Kullanıcı
+
+**Birincil persona:** 22–35 yaş, şehirli, aylık 10.000–40.000 TL harcaması olan, parasını takip etmek isteyip buna vakit ayıramayan kişi.
+
+**Ana acı noktası:** "Aya ne kadar harcadım bilmiyorum, nereye gittiğini de bilmiyorum."
+
+---
+
+## 3. Mimari Genel Bakış
+
+```
+Gmail / Banka API
+      │
+      ▼
+  Fello Backend  ──────►  CogniMemo API (cognimemo.com)
+      │                        │
+      │                   Uzun vadeli
+      │                   kişisel hafıza
+      ▼
+  Fello Mobile UI
+```
+
+### CogniMemo Entegrasyonu
+
+CogniMemo, Fello'nun **memory katmanıdır** — ayrı bir servistir, Fello bu API'yi consume eder.
+
+- Fello, her işlenen harcamayı CogniMemo'ya "hafıza" olarak yazar
+- Kullanıcı bir soru sorduğunda (doğal dil), Fello önce CogniMemo'dan ilgili geçmiş verileri çeker
+- Bu sayede "3 ay önce hangi kategoriye en çok harcadım?" gibi sorgular mümkün olur
+- UI açısından: CogniMemo bir kara kutu. Fello sadece `insight` ve `memory` nesneleri döner; UI bunları gösterir
+
+---
+
+## 4. Ekranlar & Bilgi Mimarisi
+
+### Alt Navigasyon (5 sekme)
+
+```
+[ Ana Sayfa ]  [ Harcamalar ]  [ + ]  [ Insights ]  [ Profil ]
+```
+
+Ortadaki `+` butonu hızlı manuel harcama girişi için (FAB stilinde).
+
+---
+
+### 4.1 Ana Sayfa (Home)
+
+**Amaç:** Kullanıcıya güncel finansal durumunu 5 saniyede vermek.
+
+**İçerik sırası (yukarıdan aşağı):**
+
+1. **Header:** Avatar + "Günaydın, Ahmet" + bildirim ikonu
+2. **Bakiye Kartı:** Bu ay toplam harcanan (büyük rakam) + geçen aya göre fark (% delta, renkli)
+3. **Hızlı Özet Çubukları:** Bugün / Bu Hafta / Bu Ay — küçük yatay kartlar
+4. **CogniMemo Insight Kartı:** Tek bir öne çıkan içgörü ("Getir harcamaların bu ay %35 arttı") — kaydırılabilir yatay liste
+5. **Son Harcamalar:** Zaman çizelgesi tarzı liste — ikon + marka adı + tutar + saat
+
+---
+
+### 4.2 Harcamalar
+
+**Amaç:** Tüm harcamaları filtreleyerek incelemek.
+
+**İçerik:**
+
+1. **Filtre Barı:** Tarih aralığı / Kategori / Kaynak (E-posta, Manuel, Banka)
+2. **Harcama Listesi:** Gün bazlı gruplandırılmış — her item için logo + başlık + kategori etiketi + tutar
+3. **Detay Sayfası** (item'a tıklanınca):
+   - Marka adı + tarih + tutar (büyük)
+   - Kaynak bilgisi (hangi e-postadan geldi / hangi kart)
+   - AI yorumu: "Bu ay bu markadan 4. alışveriş"
+   - İlgili geçmiş (CogniMemo'dan)
+
+---
+
+### 4.3 Insights (Hafıza Sekmesi)
+
+**Amaç:** CogniMemo'nun ürettiği kişisel analiz ve örüntüleri göstermek.
+
+**İçerik:**
+
+1. **Dönemsel Özet:** Aylık harcama dağılımı — kategori bazlı basit çubuk/halka grafik
+2. **Hafıza Kartları:** Her kart bir içgörü — "Kasım'dan beri Spotify'a ödüyorsun ama kullanmıyorsun"
+3. **Trend Analizi:** 3 aylık kategori karşılaştırması
+4. **Serbest Sorgulama Alanı:** Kullanıcı doğal dil ile soru sorar → CogniMemo'dan cevap gelir
+
+---
+
+### 4.4 Profil / Ayarlar
+
+**İçerik:**
+
+- Bağlı hesaplar: Gmail (bağlı/bağlı değil), Banka (yakında)
+- CogniMemo: Hafıza durumu, kaç kayıt var, sıfırlama
+- Bildirim tercihleri
+- Çıkış yap
+
+---
+
+## 5. Tasarım Sistemi
+
+### 5.1 Genel Yön
+
+**Referans:** Wise (wise.com) tasarım dili — güven veren, minimal, finans odaklı.  
+**Tema:** Koyu (demo için). Açık tema sonraya ertelenebilir.
+
+### 5.2 Renkler
+
+```css
+/* Ana arka plan */
+--bg-base:        #0a0a0a;   /* zinc-950 */
+--bg-surface:     #141414;   /* kart yüzeyleri */
+--bg-elevated:    #1e1e1e;   /* modal, bottom sheet */
+
+/* Vurgu — Fello yeşili (Wise signature'a yakın) */
+--accent:         #00C48C;   /* olumlu işlem, tasarruf, büyüme */
+--accent-muted:   #00C48C22; /* arka plan tonu */
+
+/* Durum renkleri */
+--danger:         #FF4D4D;   /* aşım, uyarı */
+--warning:        #F5A623;   /* dikkat */
+--neutral:        #8A8A8A;   /* muted metin */
+
+/* Metin */
+--text-primary:   #F5F5F5;
+--text-secondary: #9A9A9A;
+--text-disabled:  #4A4A4A;
+
+/* Border */
+--border-subtle:  rgba(255,255,255,0.08);
+--border-default: rgba(255,255,255,0.12);
+```
+
+### 5.3 Tipografi
+
+- **Font:** DM Sans (primary) — `400`, `500`, `600`
+- **Rakamlar için:** DM Mono — bakiye, tutar gösterimlerinde
+- **Boyutlar:**
+  - Ana bakiye: `48px / 600`
+  - Kart başlık: `18px / 600`
+  - Body: `14px / 400`
+  - Label / meta: `12px / 500`
+
+### 5.4 Bileşen Kuralları
+
+**Kartlar:**
+```
+background: var(--bg-surface)
+border: 1px solid var(--border-subtle)
+border-radius: 20px
+padding: 20px
+backdrop-filter: blur(12px)   /* cam efekti için */
+```
+
+**Harcama List Item:**
+```
+height: 64px
+layout: [logo 40px] [başlık + kategori] [tutar sağda]
+logo: rounded-12, brand rengi veya kategori ikonu
+```
+
+**Alt Navigasyon:**
+```
+position: fixed bottom
+background: var(--bg-elevated) / blur
+border-top: var(--border-subtle)
+height: 72px + safe area
+aktif sekme: var(--accent) ile altı çizili ikon
+```
+
+**Durum Badge'leri:**
+```
+Kategori etiketleri: pill şekli, 6px radius, muted bg
+Kaynak etiketi: "Gmail" / "Manuel" — küçük, soluk renk
+```
+
+---
+
+## 6. Mock Data Yapısı
+
+Geliştirme sırasında backend hazır olmadığında kullanılacak statik veri:
+
+```typescript
+// src/lib/mock-data.ts
+
+export const mockUser = {
+  name: "Ahmet",
+  avatar: "/avatars/ahmet.png",
+  thisMonthSpend: 8420,
+  lastMonthSpend: 7100,
+  delta: +18.6  // %
+}
+
+export const mockTransactions = [
+  {
+    id: "txn_001",
+    merchant: "Getir",
+    category: "Market",
+    amount: -149,
+    currency: "TRY",
+    date: "2026-05-09T19:32:00",
+    source: "gmail",  // "gmail" | "manual" | "bank"
+    logoUrl: "/logos/getir.png"
+  },
+  // ...
+]
+
+export const mockInsights = [
+  {
+    id: "ins_001",
+    type: "trend",  // "trend" | "anomaly" | "tip" | "memory"
+    text: "Bu ay Getir'e geçen aya göre %35 fazla harcadın.",
+    icon: "trending-up",
+    severity: "warning"  // "info" | "warning" | "positive"
+  },
+  // ...
+]
+```
+
+---
+
+## 7. Demo Çerçevesi
+
+Demo, web tarayıcısında iPhone mockup içinde gösterilecek.
+
+```
+Ekran boyutu:     390 × 844px (iPhone 14 base)
+Mockup container: siyah bezel, rounded-[48px]
+Dynamic Island:   üstte statik görsel yeterli
+Safe area top:    52px
+Safe area bottom: 34px
+Scroll:           overflow-y-auto, scrollbar gizli
+```
+
+**Dosya yapısı:**
+```
+src/
+├── app/
+│   └── fello/
+│       └── page.tsx          ← ana demo sayfası
+├── components/
+│   ├── ui/                   ← temel bileşenler
+│   └── fello/                ← uygulama bileşenleri
+│       ├── PhoneMockup.tsx
+│       ├── BottomNav.tsx
+│       ├── screens/
+│       │   ├── HomeScreen.tsx
+│       │   ├── TransactionsScreen.tsx
+│       │   ├── InsightsScreen.tsx
+│       │   └── ProfileScreen.tsx
+│       └── shared/
+│           ├── TransactionItem.tsx
+│           ├── InsightCard.tsx
+│           └── BalanceCard.tsx
+└── lib/
+    ├── mock-data.ts
+    └── types.ts              ← Transaction, Insight, User tipleri
+```
+
+---
+
+## 8. Geliştirme Sırası
+
+Aşağıdaki sıra takip edilirse demo hızlıca hazır olur:
+
+1. **`types.ts`** — `Transaction`, `Insight`, `User` interface'leri
+2. **`mock-data.ts`** — statik test verisi
+3. **`PhoneMockup.tsx`** — çerçeve + safe area
+4. **`BottomNav.tsx`** — sekme geçişleri çalışır hale gelsin
+5. **`HomeScreen.tsx`** — bakiye kartı + son harcamalar listesi
+6. **`TransactionItem.tsx`** — tekrar kullanılabilir liste item
+7. **`InsightCard.tsx`** — CogniMemo insight gösterimi
+8. **`TransactionsScreen.tsx`** — filtreli liste
+9. **`InsightsScreen.tsx`** — grafik + hafıza kartları
+10. **`ProfileScreen.tsx`** — entegrasyon durumu
+
+---
+
+## 9. Kapsam Dışı (Demo İçin)
+
+Aşağıdakiler demo kapsamında **geliştirilmeyecek:**
+
+- Gerçek Gmail API entegrasyonu
+- Gerçek banka bağlantısı
+- CogniMemo canlı API çağrısı
+- Authentication / kullanıcı oturumu
+- Push bildirimler
+- Açık tema
+
+Bunlar MVP sonrası aşamaya ertelenmiştir.

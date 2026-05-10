@@ -1,26 +1,464 @@
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+/* ──────────────────────────────────────────
+   Wise-inspired Fello Design Token System
+   ────────────────────────────────────────── */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surface */
+  --bg-base:        #FAFAFA;
+  --bg-surface:     #FFFFFF;
+  --bg-elevated:    #F0F0F0;
+  --bg-overlay:     rgba(0,0,0,0.04);
+
+  /* Brand — light: forest; neon only when html.dark */
+  --accent:         #14732e;
+  --accent-hover:   #115d26;
+  --accent-muted:   rgba(0, 65, 9, 0.12);
+  --accent-text:    #004109;
+  --on-accent:      #fafefa;
+
+  /* Status */
+  --danger:         #D0302F;
+  --danger-muted:   rgba(208,48,47,0.08);
+  --warning:        #C7600A;
+  --warning-muted:  rgba(199,96,10,0.08);
+  --positive:       #14732e;
+  --positive-muted: rgba(0, 65, 9, 0.10);
+
+  /* Text */
+  --text-primary:   #1E2329;
+  --text-secondary: #56616E;
+  --text-tertiary:  #8B99A8;
+  --text-disabled:  #B8C0C8;
+  --text-inverse:   #141414;
+
+  /* Border */
+  --border-subtle:  rgba(0,0,0,0.06);
+  --border-default: rgba(0,0,0,0.10);
+  --border-strong:  rgba(0,0,0,0.18);
+
+  /* Radius */
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+  --radius-2xl: 24px;
+
+  /* Transition */
+  --transition: 150ms ease;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --accent:         #7FED45;
+  --accent-hover:   #6EDB3B;
+  --accent-muted:   rgba(127, 237, 69, 0.10);
+  --accent-text:    #BEF264;
+  --on-accent:      #141414;
+  --positive:       #7FED45;
+  --positive-muted: rgba(127, 237, 69, 0.10);
+
+  --bg-base:        #0A0A0A;
+  --bg-surface:     #141414;
+  --bg-elevated:    #1E1E1E;
+  --bg-overlay:     rgba(255,255,255,0.04);
+
+  --text-primary:   #F5F5F5;
+  --text-secondary: #9A9A9A;
+  --text-tertiary:  #6A6A6A;
+  --text-disabled:  #4A4A4A;
+  --text-inverse:   #141414;
+
+  --border-subtle:  rgba(255,255,255,0.06);
+  --border-default: rgba(255,255,255,0.10);
+  --border-strong:  rgba(255,255,255,0.18);
+
+  --bg-overlay:     rgba(255,255,255,0.03);
+  --danger-muted:   rgba(208,48,47,0.12);
+  --warning-muted:  rgba(199,96,10,0.12);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ── Base ── */
+html { color-scheme: light dark; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+  font-family: inherit;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* ── Wise-style Chip ── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  user-select: none;
+}
+.chip:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+.chip.chip--active {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+/* ── Wise-style List Item ── */
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  min-height: 64px;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+/* Rows inside rounded cards (profile, etc.) */
+.wise-card > .list-item {
+  padding-left: 16px;
+  padding-right: 16px;
+  gap: 14px;
+}
+.list-item:last-child { border-bottom: none; }
+.list-item:hover { opacity: 0.75; }
+.list-item:active { opacity: 0.6; }
+.list-item__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: center;
+  color: var(--text-secondary);
+}
+.list-item__avatar > :is(svg, img) {
+  display: block;
+  flex-shrink: 0;
+}
+/* Logo: stretch inner slot so bitmaps center and use full cell */
+.list-item__avatar .brand-logo-slot {
+  flex: 1 1 0;
+  align-self: stretch;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Generic: parent sets width/height; logo scales inside with even inset */
+.brand-logo-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 4px;
+  min-width: 0;
+  min-height: 0;
+}
+.brand-logo-slot__img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
+/* Slightly more room in small square cells (insights, etc.) */
+.brand-logo-slot--cell {
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+}
+/* Receipt / large round mark */
+.brand-logo-slot--receipt {
+  width: 100%;
+  height: 100%;
+  padding: 7px;
+}
+
+/* Nudge icon cell: brand image uses same rules */
+.nudge__icon--brand {
+  padding: 0;
+  overflow: hidden;
+  background: var(--bg-elevated) !important;
+  align-items: stretch;
+  justify-content: stretch;
+}
+.nudge__icon--brand .brand-logo-slot {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  width: auto;
+  height: auto;
+  padding: 6px;
+}
+.list-item__content {
+  flex: 1;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.list-item__title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+.list-item__subtitle {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.list-item__value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.list-item__accessory {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.list-item__accessory:is(svg) {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ── Section Header (Wise style) ── */
+.section-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 16px 0 8px;
+}
+
+/* ── Wise-style Card ── */
+.wise-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+.wise-card--interactive {
+  cursor: pointer;
+}
+.wise-card--interactive:hover {
+  border-color: var(--border-default);
+}
+
+/* ── Inline Prompt (Wise — Info/Warning/Positive/Negative) ── */
+.inline-prompt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.inline-prompt--info     { background: var(--bg-overlay); color: var(--text-secondary); }
+.inline-prompt--positive { background: var(--positive-muted); color: var(--accent-text); }
+.inline-prompt--warning  { background: var(--warning-muted); color: var(--warning); }
+.inline-prompt--negative { background: var(--danger-muted); color: var(--danger); }
+.inline-prompt__icon { flex-shrink: 0; margin-top: 1px; }
+
+/* ── Wise-style Nudge ── */
+.nudge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+.nudge:hover {
+  border-color: var(--border-default);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+.nudge__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-muted);
+  color: var(--accent-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.nudge__content { flex: 1; }
+.nudge__title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 1px; }
+.nudge__description { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+
+/* Abonelik tasarrufu — yatay slide kartlar */
+.subscription-slide-card {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color var(--transition), transform var(--transition), opacity var(--transition);
+}
+.subscription-slide-card__badge--corner {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  z-index: 1;
+  pointer-events: none;
+}
+.subscription-slide-card:hover {
+  opacity: 0.95;
+}
+.subscription-slide-card--urgent {
+  background: var(--danger-muted);
+  border-color: rgba(208, 48, 47, 0.35);
+}
+.subscription-slide-card--deal {
+  background: var(--positive-muted);
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+}
+.subscription-slide-card--tip {
+  background: var(--warning-muted);
+  border-color: rgba(234, 179, 8, 0.45);
+}
+.subscription-slide-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+.subscription-slide-card__badge--compact {
+  font-size: 9px;
+  padding: 2px 6px;
+  gap: 3px;
+  border-radius: 6px;
+}
+.subscription-slide-card__badge[data-tone="urgent"] {
+  background: rgba(208, 48, 47, 0.2);
+  color: var(--danger);
+}
+.subscription-slide-card__badge[data-tone="deal"] {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent-text);
+}
+.subscription-slide-card__badge[data-tone="tip"] {
+  background: rgba(234, 179, 8, 0.22);
+  color: #a16207;
+}
+.dark .subscription-slide-card__badge[data-tone="deal"] {
+  color: #4ade80;
+}
+.dark .subscription-slide-card__badge[data-tone="tip"] {
+  color: #facc15;
+}
+
+/* ── Wise-style Summary ── */
+.summary-group {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.summary-item:last-child { border-bottom: none; }
+.summary-item__label { font-size: 14px; color: var(--text-secondary); }
+.summary-item__value { font-size: 14px; font-weight: 600; color: var(--text-primary); text-align: right; }
+.summary-item__value--highlight { color: var(--accent-text); }
+
+/* ── Scrollbar hide ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Input base ── */
+.fello-input {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: border-color var(--transition);
+  outline: none;
+}
+.fello-input::placeholder { color: var(--text-tertiary); }
+.fello-input:focus { border-color: var(--accent); }
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(0.99); }
+}
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+@keyframes fello-accent-glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 12px color-mix(in srgb, var(--accent) 42%, transparent),
+      0 0 22px color-mix(in srgb, var(--accent) 20%, transparent),
+      0 2px 5px color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 22px color-mix(in srgb, var(--accent) 85%, transparent),
+      0 0 40px color-mix(in srgb, var(--accent) 38%, transparent),
+      0 2px 10px color-mix(in srgb, var(--accent) 32%, transparent);
+  }
+}
+.fello-logo-glow-pulse {
+  animation: fello-accent-glow-pulse 2.75s ease-in-out infinite;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fello-logo-glow-pulse {
+    animation: none;
+    box-shadow:
+      0 0 18px color-mix(in srgb, var(--accent) 60%, transparent),
+      0 0 32px color-mix(in srgb, var(--accent) 28%, transparent),
+      0 2px 7px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
 }
