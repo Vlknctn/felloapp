@@ -1,3 +1,11 @@
+# Fello — Abonelik ve Harcama Asistanı
+
+**[Canlı demo → https://felloapp.vercel.app](https://felloapp.vercel.app)**
+
+Repoya kod incelemek için değil, uygulamayı denemek için geldiysen yukarıdaki bağlantıdan doğrudan demoya gidebilirsin.
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
