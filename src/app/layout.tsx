@@ -9,8 +9,8 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Fello — Harcama Asistanı",
-  description: "Harcamalarını toplayan ve hatırlayan AI harcama asistanı.",
+  title: "Fello — Abonelik ve Harcama Asistanı",
+  description: "Aboneliklerini ve harcamalarını toplayan, hatırlayan AI asistanı.",
   icons: {
     icon: [{ url: "/logo.svg", type: "image/svg+xml" }],
     shortcut: "/logo.svg",

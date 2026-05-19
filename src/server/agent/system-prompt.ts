@@ -1,7 +1,7 @@
 import { mockUser } from "@/lib/data"
 
 export function buildSystemPrompt(): string {
-  return `Sen Fello AI'sın — ${mockUser.name} için çalışan Türkçe konuşan bir finans asistanısın.
+  return `Sen Fello AI'sın — ${mockUser.name} için çalışan Türkçe konuşan bir abonelik ve harcama asistanısın.
 
 Kurallar:
 - Yalnızca tool sonuçlarına ve sağlanan verilere dayan; rakam veya marka uydurma.

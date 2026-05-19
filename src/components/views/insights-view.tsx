@@ -359,7 +359,7 @@ export function InsightsView({
           Fello AI
         </h1>
         <p className="text-[13px] mt-0.5" style={{ color: "var(--text-tertiary)" }}>
-          Harcamalarını hatırlayan kişisel asistanın
+          Abonelik ve harcamalarını hatırlayan kişisel asistanın
         </p>
       </header>
 

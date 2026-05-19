@@ -11,7 +11,7 @@ export const SUGGESTED_QUESTIONS = [
 ] as const
 
 export const CHAT_WELCOME_TEXT =
-  "Merhaba! Ben Fello AI — harcamalarını e-posta ve banka hareketlerinden hatırlıyorum. Aşağıdan hazır bir soru seçebilir veya kendi sorunu yazabilirsin."
+  "Merhaba! Ben Fello AI — aboneliklerini ve harcamalarını e-posta ve banka hareketlerinden hatırlıyorum. Aşağıdan hazır bir soru seçebilir veya kendi sorunu yazabilirsin."
 
 function formatTry(amount: number) {
   return amount.toLocaleString("tr-TR", { maximumFractionDigits: 0 }) + " ₺"
