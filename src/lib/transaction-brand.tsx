@@ -10,7 +10,7 @@ import {
   Utensils,
   Dumbbell,
   Gamepad2,
-} from "lucide-react"
+} from "@/lib/icons"
 
 export const transactionIconMap: Record<string, ElementType> = {
   "shopping-cart": ShoppingCart,

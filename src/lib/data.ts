@@ -178,30 +178,67 @@ export const mockTransactions: Transaction[] = [
     source: "gmail",
     logoUrl: "/AMBLEM_SARI.jpg.webp",
   },
+  // Geçen ay — bill creep karşılaştırması (~%20 artış)
+  {
+    id: "txn_017",
+    merchant: "Turkcell",
+    category: "Fatura",
+    amount: -354,
+    currency: "TRY",
+    date: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 18).toISOString(),
+    source: "gmail",
+    logoUrl: "/AMBLEM_SARI.jpg.webp",
+  },
+
+  // ── AI & iş abonelikleri ──
+  {
+    id: "txn_018",
+    merchant: "ChatGPT",
+    category: "Abonelik",
+    amount: -699,
+    currency: "TRY",
+    date: new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString(),
+    source: "gmail",
+    logoUrl: "/chatgpt.png",
+  },
+  {
+    id: "txn_019",
+    merchant: "Google Gemini",
+    category: "Abonelik",
+    amount: -649,
+    currency: "TRY",
+    date: new Date(Date.now() - 27 * 60 * 60 * 1000).toISOString(),
+    source: "gmail",
+    logoUrl: "/gemini.jpeg",
+  },
+  {
+    id: "txn_020",
+    merchant: "LinkedIn",
+    category: "Abonelik",
+    amount: -899,
+    currency: "TRY",
+    date: new Date(Date.now() - 29 * 60 * 60 * 1000).toISOString(),
+    source: "gmail",
+    logoUrl: "/linkedin.jpeg",
+  },
 ];
 
 export const mockInsights: Insight[] = [
   {
     id: "ins_trial_001",
     type: "tip",
-    text: "YouTube Premium deneme süren 3 gün sonra bitiyor. İptal etmezsen 59.99 ₺ çekilecek.",
+    title: "YouTube Premium deneme bitiyor",
+    text: "3 gün sonra otomatik yenilenecek. İptal etmezsen kartından çekilir.",
     icon: "alert-triangle",
     severity: "warning",
     paymentAmountTry: 59.99,
-    action: { label: "Hafızada gör", tab: "insights" },
-  },
-  {
-    id: "ins_sub_001",
-    type: "memory",
-    text: "Turkcell faturan geçen aya göre %20 arttı (Aşım ücreti: 85 ₺).",
-    icon: "brain",
-    severity: "warning",
-    paymentAmountTry: 85,
+    action: { label: "Aboneliklere git", tab: "insights" },
   },
   {
     id: "ins_001",
     type: "trend",
-    text: "Bu ay Getir'e geçen aya göre %35 fazla harcadın. Bu hızla devam ederse aylık 800₺'yi aşabilir.",
+    title: "Getir harcamaların yükseldi",
+    text: "Bu ay geçen aya göre %35 fazla harcadın. Bu tempoda aylık 800 ₺'yi aşabilirsin.",
     icon: "trending-up",
     severity: "warning",
     paymentAmountTry: 800,
@@ -210,17 +247,90 @@ export const mockInsights: Insight[] = [
   {
     id: "ins_002",
     type: "memory",
-    text: "Kasım'dan beri Spotify'a aylık 59,99₺ ödüyorsun ama son 28 gündür hiç açmamışsın.",
+    title: "Spotify kullanılmıyor",
+    text: "Kasım'dan beri aylık 59,99 ₺ ödüyorsun ama son 28 gündür hiç dinlememişsin.",
     icon: "brain",
     severity: "warning",
     paymentAmountTry: 59.99,
+    action: { label: "Aboneliklere git", tab: "insights" },
   },
   {
     id: "ins_price_001",
     type: "tip",
-    text: "Netflix üyelik ücretine %15 zam geliyor. Yeni dönemde bu tutar çekilecek.",
+    title: "Netflix zam geliyor",
+    text: "Yeni dönemde üyelik ücreti %15 artacak. İstersen alternatifleri değerlendir.",
     icon: "sparkles",
     severity: "info",
     paymentAmountTry: 114.99,
+    action: { label: "Detayları gör", tab: "insights" },
   },
 ];
+
+export interface Subscription {
+  id: number
+  name: string
+  status: string
+  date: string
+  amount: string
+  logoSrc: string
+}
+
+export interface SystemMessage {
+  id: number
+  from: string
+  text: string
+  time: string
+  transactionId?: string
+}
+
+export const mockSubscriptions: Subscription[] = [
+  {
+    id: 1,
+    name: "YouTube Premium",
+    status: "Deneme Bitiyor",
+    date: "3 gün kaldı",
+    amount: "59,99 ₺",
+    logoSrc: "/Youtube_logo.png",
+  },
+  {
+    id: 2,
+    name: "Netflix",
+    status: "Aktif",
+    date: "12 May",
+    amount: "114,99 ₺",
+    logoSrc: "/netflix.png",
+  },
+  {
+    id: 3,
+    name: "Spotify",
+    status: "Kullanılmıyor",
+    date: "24 May",
+    amount: "59,99 ₺",
+    logoSrc: "/Spotify_logo_without_text.svg.png",
+  },
+  {
+    id: 4,
+    name: "Turkcell",
+    status: "Fatura Kesildi",
+    date: "Dün",
+    amount: "425,00 ₺",
+    logoSrc: "/AMBLEM_SARI.jpg.webp",
+  },
+]
+
+export const mockSystemMessages: SystemMessage[] = [
+  {
+    id: 1,
+    from: "Turkcell",
+    text: "Değerli müşterimiz, 0532******* nolu hattınızın Nisan ayı faturası 425,00 ₺ olarak kesilmiştir. Son ödeme tarihi: 15.05.2026",
+    time: "2 saat önce",
+    transactionId: "txn_016",
+  },
+  {
+    id: 2,
+    from: "Netflix",
+    text: "Üyelik ücretlerimiz güncelleniyor. Yeni dönemde üyeliğiniz 114,99 ₺ üzerinden yenilenecektir.",
+    time: "Dün",
+    transactionId: "txn_008",
+  },
+]

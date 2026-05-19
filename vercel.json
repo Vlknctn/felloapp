@@ -1,0 +1,10 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run vercel-build",
+  "env": {
+    "DATABASE_URL": "file:./dev.db",
+    "DEMO_MODE": "true",
+    "AGENT_FALLBACK": "true",
+    "MARKET_SCRAPE_ENABLED": "false"
+  }
+}
