@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/server/db/prisma"
 import { pingCognimemo } from "@/server/cognimemo/client"
-import { env, isCognimemoConfigured, isOpenaiConfigured } from "@/server/config/env"
+import { env, isCognimemoConfigured, isOpenaiConfigured, useInMemoryDemoStore } from "@/server/config/env"
+import { mockTransactions } from "@/lib/data"
 import { readMarketCache } from "@/server/market/cache"
 import { countTransactions } from "@/server/transactions/repository"
 
@@ -10,13 +11,17 @@ export async function GET() {
     ok: false,
   }
 
-  try {
-    const transactionCount = await countTransactions()
-    database = { ok: true, transactionCount }
-  } catch (err) {
-    database = {
-      ok: false,
-      error: err instanceof Error ? err.message : "database_error",
+  if (useInMemoryDemoStore()) {
+    database = { ok: true, transactionCount: mockTransactions.length }
+  } else {
+    try {
+      const transactionCount = await countTransactions()
+      database = { ok: true, transactionCount }
+    } catch (err) {
+      database = {
+        ok: false,
+        error: err instanceof Error ? err.message : "database_error",
+      }
     }
   }
 

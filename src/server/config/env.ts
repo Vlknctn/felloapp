@@ -30,3 +30,8 @@ export function isCognimemoConfigured(): boolean {
 export function isOpenaiConfigured(): boolean {
   return Boolean(env.openaiApiKey)
 }
+
+/** Vercel serverless cannot open bundled SQLite at runtime — use mock data in demo. */
+export function useInMemoryDemoStore(): boolean {
+  return env.demoMode && Boolean(process.env.VERCEL)
+}

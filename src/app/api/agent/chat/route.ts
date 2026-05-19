@@ -14,10 +14,11 @@ const bodySchema = z.object({
 })
 
 export async function POST(req: Request) {
+  let lastUser = ""
   try {
     const parsed = bodySchema.parse(await req.json())
     const messages = parsed.messages as UIMessage[]
-    const lastUser = extractLastUserText(messages)
+    lastUser = extractLastUserText(messages)
 
     if (!lastUser) {
       return NextResponse.json({ error: "no_user_message" }, { status: 400 })
@@ -51,6 +52,14 @@ export async function POST(req: Request) {
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: "invalid_body", details: err.flatten() }, { status: 400 })
+    }
+    if (env.agentFallback && lastUser) {
+      try {
+        const text = await runFelloAgentFallback(lastUser)
+        return NextResponse.json({ mode: "fallback", text })
+      } catch {
+        /* fall through */
+      }
     }
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "unknown_error" },
